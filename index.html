@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PathFinder Kerala – Your Future Starts Here</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Chettan+2:wght@400;600;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #0d6b3e;
+    --gold: #f5a623;
+    --light-green: #19a65a;
+    --cream: #fdf6ec;
+    --deep: #072a19;
+    --white: #fff;
+    --card-bg: rgba(255,255,255,0.93);
+    --shadow: 0 8px 40px rgba(13,107,62,0.13);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--cream);
+    color: var(--deep);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== NAV ===== */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 5vw;
+    height: 70px;
+    background: rgba(7,42,25,0.97);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 2px 24px rgba(0,0,0,0.18);
+  }
+  .nav-logo {
+    display: flex; align-items: center; gap: 12px; text-decoration: none;
+  }
+  .nav-logo .leaf { font-size: 2rem; }
+  .nav-logo span {
+    font-family: 'Baloo Chettan 2', cursive;
+    font-size: 1.4rem; font-weight: 800;
+    color: var(--gold); letter-spacing: 1px;
+  }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    color: rgba(255,255,255,0.82); text-decoration: none;
+    font-size: 0.93rem; font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse at 70% 40%, rgba(245,166,35,0.13) 0%, transparent 60%),
+      radial-gradient(ellipse at 20% 80%, rgba(25,166,90,0.15) 0%, transparent 55%),
+      linear-gradient(160deg, #072a19 0%, #0d6b3e 55%, #19a65a 100%);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; text-align: center;
+    padding: 120px 5vw 80px;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(circle, rgba(245,166,35,0.18) 1px, transparent 1px);
+    background-size: 44px 44px;
+    animation: dotPulse 6s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
+  @keyframes dotPulse {
+    0% { opacity: 0.4; transform: scale(1); }
+    100% { opacity: 0.9; transform: scale(1.04); }
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(245,166,35,0.18);
+    border: 1.5px solid var(--gold);
+    color: var(--gold);
+    font-size: 0.78rem; font-weight: 600;
+    letter-spacing: 3px; text-transform: uppercase;
+    padding: 6px 22px; border-radius: 50px;
+    margin-bottom: 28px;
+    animation: fadeUp 0.8s ease both;
+  }
+  .hero h1 {
+    font-family: 'Baloo Chettan 2', cursive;
+    font-size: clamp(2.6rem, 7vw, 5.2rem);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.08;
+    margin-bottom: 22px;
+    animation: fadeUp 0.9s 0.1s ease both;
+  }
+  .hero h1 span { color: var(--gold); }
+  .hero p {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    color: rgba(255,255,255,0.8);
+    max-width: 600px;
+    margin: 0 auto 42px;
+    line-height: 1.7;
+    animation: fadeUp 1s 0.2s ease both;
+  }
+  .hero-cta {
+    display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp 1s 0.35s ease both;
+  }
+  .btn-gold {
+    background: var(--gold); color: var(--deep);
+    font-weight: 700; font-size: 1rem;
+    padding: 14px 36px; border-radius: 50px;
+    text-decoration: none; border: none; cursor: pointer;
+    box-shadow: 0 4px 24px rgba(245,166,35,0.4);
+    transition: transform 0.18s, box-shadow 0.18s;
+    font-family: 'Poppins', sans-serif;
+  }
+  .btn-gold:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(245,166,35,0.55); }
+  .btn-outline {
+    background: transparent; color: #fff;
+    font-weight: 600; font-size: 1rem;
+    padding: 13px 36px; border-radius: 50px;
+    text-decoration: none; border: 2px solid rgba(255,255,255,0.45);
+    cursor: pointer; transition: border-color 0.2s, background 0.2s;
+    font-family: 'Poppins', sans-serif;
+  }
+  .btn-outline:hover { border-color: #fff; background: rgba(255,255,255,0.08); }
+
+  .hero-scroll {
+    margin-top: 60px;
+    color: rgba(255,255,255,0.45); font-size: 0.82rem; letter-spacing: 2px;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    animation: fadeUp 1.2s 0.5s both;
+  }
+  .hero-scroll .arrow {
+    width: 28px; height: 28px;
+    border-right: 2px solid rgba(255,255,255,0.3);
+    border-bottom: 2px solid rgba(255,255,255,0.3);
+    transform: rotate(45deg);
+    animation: bounce 1.4s infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: rotate(45deg) translateY(0); }
+    50% { transform: rotate(45deg) translateY(7px); }
+  }
+
+  /* ===== STATS STRIP ===== */
+  .stats-strip {
+    background: var(--green);
+    padding: 28px 5vw;
+    display: flex; justify-content: center; gap: clamp(28px, 6vw, 80px);
+    flex-wrap: wrap;
+  }
+  .stat-item { text-align: center; color: #fff; }
+  .stat-item .num {
+    font-family: 'Baloo Chettan 2', cursive;
+    font-size: 2rem; font-weight: 800; color: var(--gold);
+  }
+  .stat-item .label { font-size: 0.82rem; opacity: 0.8; margin-top: -4px; }
+
+  /* ===== SECTION COMMON ===== */
+  section { padding: 90px 5vw; }
+  .section-tag {
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--light-green);
+    margin-bottom: 10px;
+  }
+  .section-title {
+    font-family: 'Baloo Chettan 2', cursive;
+    font-size: clamp(1.9rem, 4vw, 2.8rem);
+    font-weight: 800; color: var(--deep);
+    line-height: 1.15; margin-bottom: 14px;
+  }
+  .section-sub {
+    color: #4a6a57; font-size: 1.03rem; max-width: 520px; line-height: 1.7;
+  }
+
+  /* ===== PRODUCTS SECTION ===== */
+  #products { background: var(--cream); }
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 28px; margin-top: 52px;
+  }
+  .product-card {
+    background: var(--card-bg);
+    border-radius: 24px;
+    padding: 38px 32px 32px;
+    box-shadow: var(--shadow);
+    border: 1.5px solid rgba(13,107,62,0.08);
+    transition: transform 0.22s, box-shadow 0.22s;
+    position: relative; overflow: hidden;
+    cursor: pointer;
+    text-decoration: none; color: inherit;
+    display: block;
+  }
+  .product-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 5px;
+    border-radius: 24px 24px 0 0;
+  }
+  .card-group::before { background: linear-gradient(90deg, var(--green), var(--light-green)); }
+  .card-career::before { background: linear-gradient(90deg, #c27d00, var(--gold)); }
+  .card-school::before { background: linear-gradient(90deg, #1a6b8c, #2ab8e0); }
+  .card-subject::before { background: linear-gradient(90deg, #7b2fa0, #c16fe0); }
+
+  .product-card:hover { transform: translateY(-8px); box-shadow: 0 20px 60px rgba(13,107,62,0.18); }
+  .product-icon {
+    width: 64px; height: 64px; border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.1rem; margin-bottom: 24px;
+  }
+  .icon-group { background: #e6f5ee; }
+  .icon-career { background: #fff4e0; }
+  .icon-school { background: #e0f4fb; }
+  .icon-subject { background: #f5e8fc; }
+
+  .product-card h3 {
+    font-family: 'Baloo Chettan 2', cursive;
+    font-size: 1.35rem; font-weight: 700;
+    margin-bottom: 10px; color: var(--deep);
+  }
+  .product-card p { font-size: 0.9rem; color: #4a6a57; line-height: 1.65; }
+  .product-for {
+    display: inline-block; margin-top: 20px;
+    font-size: 0.73rem; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; padding: 5px 14px;
+    border-radius: 20px; background: #e6f5ee; color: var(--green);
+  }
+  .card-career .product-for { background: #fff4e0; color: #a06b00; }
+  .card-school .product-for { background: #e0f4fb; color: #1a6b8c; }
+  .card-subject .product-for { background: #f5e8fc; color: #7b2fa0; }
+
+  .take-test-btn {
+    margin-top: 22px;
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--green); color: #fff;
+    font-size: 0.88rem; font-weight: 600;
+    padding: 10px 22px; border-radius: 50px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.18s;
+  }
+  .take-test-btn:hover { background: var(--light-green); transform: scale(1.04); }
+  .take-test-btn .arrow { font-size: 1rem; }
+
+  /* ===== HOW IT WORKS ===== */
+  #how { background: linear-gradient(135deg, #072a19 0%, #0d6b3e 100%); }
+  #how .section-tag { color: var(--gold); }
+  #how .section-title { color: #fff; }
+  #how .section-sub { color: rgba(255,255,255,0.7); }
+  .steps-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 36px; margin-top: 52px;
+  }
+  .step {
+    text-align: center; color: #fff;
+  }
+  .step-num {
+    width: 60px; height: 60px; border-radius: 50%;
+    background: rgba(245,166,35,0.18); border: 2px solid var(--gold);
+    color: var(--gold); font-family: 'Baloo Chettan 2', cursive;
+    font-size: 1.5rem; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 18px;
+  }
+  .step h4 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+  .step p { font-size: 0.87rem; opacity: 0.72; line-height: 1.6; }
+
+  /* ===== KERALA PRIDE ===== */
+  .kerala-strip {
+    background: var(--gold);
+    padding: 18px 5vw;
+    display: flex; align-items: center; justify-content: center;
+    gap: 18px; flex-wrap: wrap;
+    font-family: 'Baloo Chettan 2', cursive;
+    font-size: 1.1rem; font-weight: 700;
+    color: var(--deep);
+  }
+
+  /* ===== TESTIMONIALS ===== */
+  #testimonials { background: #f0f9f4; }
+  .testimonials-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px; margin-top: 48px;
+  }
+  .testimonial-card {
+    background: #fff; border-radius: 20px;
+    padding: 30px 26px;
+    box-shadow: 0 4px 24px rgba(13,107,62,0.08);
+    border: 1px solid rgba(13,107,62,0.07);
+  }
+  .stars { color: var(--gold); font-size: 1rem; margin-bottom: 14px; }
+  .testimonial-card p { font-size: 0.9rem; color: #3a5a48; line-height: 1.7; margin-bottom: 18px; }
+  .testi-author { display: flex; align-items: center; gap: 12px; }
+  .testi-avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: var(--green); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 1.05rem;
+  }
+  .testi-name { font-weight: 700; font-size: 0.9rem; color: var(--deep); }
+  .testi-loc { font-size: 0.77rem; color: #7a9a88; }
+
+  /* ===== CTA SECTION ===== */
+  #cta {
+    background:
+      radial-gradient(ellipse at 80% 20%, rgba(245,166,35,0.15) 0%, transparent 50%),
+      linear-gradient(140deg, #0d6b3e, #072a19);
+    text-align: center; padding: 100px 5vw;
+  }
+  #cta .section-title { color: #fff; margin-bottom: 14px; }
+  #cta .section-sub { color: rgba(255,255,255,0.72); margin: 0 auto 40px; }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: #051a10; color: rgba(255,255,255,0.55);
+    padding: 40px 5vw 24px;
+    display: flex; flex-direction: column; align-items: center; gap: 18px;
+    text-align: center;
+  }
+  footer .foot-logo {
+    font-family: 'Baloo Chettan 2', cursive;
+    font-size: 1.3rem; font-weight: 800; color: var(--gold);
+  }
+  footer p { font-size: 0.83rem; }
+  footer .foot-links { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
+  footer .foot-links a { color: rgba(255,255,255,0.45); text-decoration: none; font-size: 0.83rem; }
+  footer .foot-links a:hover { color: var(--gold); }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(32px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .reveal {
+    opacity: 0; transform: translateY(36px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 600px) {
+    .nav-links { display: none; }
+    .hero h1 { font-size: 2.4rem; }
+    .stats-strip { gap: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">
+    <span class="leaf">🌿</span>
+    <span>PathFinder Kerala</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#products">Products</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#testimonials">Stories</a></li>
+    <li><a href="test.html" style="color:var(--gold);font-weight:700;">Take Test →</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🎓 For SSLC Completed Students of Kerala</div>
+  <h1>Discover Your <span>Perfect Path</span><br>After SSLC</h1>
+  <p>Science or Commerce? Arts or Vocational? Stop guessing. Take our AI-powered psychometric test and find the group that truly matches who you are.</p>
+  <div class="hero-cta">
+    <a href="test.html" class="btn-gold">🧠 Take Free Test Now</a>
+    <a href="#products" class="btn-outline">Explore All Tools</a>
+  </div>
+  <div class="hero-scroll">
+    SCROLL TO EXPLORE
+    <div class="arrow"></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-strip">
+  <div class="stat-item"><div class="num">15,000+</div><div class="label">Students Guided</div></div>
+  <div class="stat-item"><div class="num">25</div><div class="label">Smart Questions</div></div>
+  <div class="stat-item"><div class="num">4</div><div class="label">Groups Mapped</div></div>
+  <div class="stat-item"><div class="num">98%</div><div class="label">Satisfaction Rate</div></div>
+</div>
+
+<!-- KERALA STRIP -->
+<div class="kerala-strip">
+  🌴 Proudly Made for Kerala Students &nbsp;|&nbsp; 📚 Based on Kerala School Curriculum &nbsp;|&nbsp; 🏆 Trusted by Students across all 14 Districts
+</div>
+
+<!-- PRODUCTS -->
+<section id="products">
+  <div class="section-tag">Our Tools</div>
+  <div class="section-title">Everything You Need<br>to Choose Your Future</div>
+  <div class="section-sub">Four powerful tools designed specifically for Kerala students navigating life after SSLC and Plus Two.</div>
+  <div class="products-grid">
+
+    <a href="test.html" class="product-card card-group reveal">
+      <div class="product-icon icon-group">🎯</div>
+      <div class="product-for">SSLC Completed</div>
+      <h3>Group Finder</h3>
+      <p>Not sure which stream to choose after SSLC? Answer 25 questions about your interests, habits, and personality to find your ideal group — Science, Commerce, Humanities, or Vocational.</p>
+      <a href="test.html" class="take-test-btn">Take the Test <span class="arrow">→</span></a>
+    </a>
+
+    <div class="product-card card-career reveal" style="cursor:default;">
+      <div class="product-icon icon-career">🚀</div>
+      <div class="product-for">Plus Two Students</div>
+      <h3>Career Finder</h3>
+      <p>Completed Plus Two and unsure about your career path? Explore hundreds of career options tailored to your Plus Two group and personal strengths. Coming Soon.</p>
+      <div class="take-test-btn" style="opacity:0.5;cursor:not-allowed;">Coming Soon</div>
+    </div>
+
+    <div class="product-card card-school reveal" style="cursor:default;">
+      <div class="product-icon icon-school">🏫</div>
+      <div class="product-for">All Students</div>
+      <h3>School Finder</h3>
+      <p>Find the best schools near you that offer your preferred subject combination. Filter by district, medium, management type, and available streams. Coming Soon.</p>
+      <div class="take-test-btn" style="background:#1a6b8c;opacity:0.5;cursor:not-allowed;">Coming Soon</div>
+    </div>
+
+    <div class="product-card card-subject reveal" style="cursor:default;">
+      <div class="product-icon icon-subject">📖</div>
+      <div class="product-for">All Students</div>
+      <h3>Subject Explorer</h3>
+      <p>Confused about what each subject actually teaches? Get clear, student-friendly explanations of every Plus One & Plus Two subject so you can choose confidently. Coming Soon.</p>
+      <div class="take-test-btn" style="background:#7b2fa0;opacity:0.5;cursor:not-allowed;">Coming Soon</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-tag">The Process</div>
+  <div class="section-title">How Group Finder Works</div>
+  <div class="section-sub">A science-backed approach to finding your ideal academic stream in just a few minutes.</div>
+  <div class="steps-grid">
+    <div class="step reveal">
+      <div class="step-num">1</div>
+      <h4>Answer 25 Questions</h4>
+      <p>Questions based on your daily routines, interests, hobbies and natural behaviour patterns.</p>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">2</div>
+      <h4>Psychometric Analysis</h4>
+      <p>Our algorithm scores your responses using proven psychometric methods used globally.</p>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">3</div>
+      <h4>Get Your Results</h4>
+      <p>See your compatibility percentage for each group with a clear recommended stream.</p>
+    </div>
+    <div class="step reveal">
+      <div class="step-num">4</div>
+      <h4>Plan Your Future</h4>
+      <p>Use the insights to confidently choose your Plus One group and start your journey.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="section-tag">Student Stories</div>
+  <div class="section-title">Real Students,<br>Real Clarity</div>
+  <div class="testimonials-grid">
+    <div class="testimonial-card reveal">
+      <div class="stars">★★★★★</div>
+      <p>"I was completely lost between Science and Commerce. After taking the test I scored 78% for Commerce and 61% for Science. I chose Commerce and I'm loving it!"</p>
+      <div class="testi-author">
+        <div class="testi-avatar">A</div>
+        <div><div class="testi-name">Aswathy Krishnan</div><div class="testi-loc">Kozhikode</div></div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal">
+      <div class="stars">★★★★★</div>
+      <p>"My parents wanted Science but the test showed Humanities was the best fit at 82%. I showed them the detailed result and they agreed. Best decision ever."</p>
+      <div class="testi-author">
+        <div class="testi-avatar">R</div>
+        <div><div class="testi-name">Rahul Menon</div><div class="testi-loc">Thrissur</div></div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal">
+      <div class="stars">★★★★★</div>
+      <p>"The questions were about real-life things — not just textbooks. It actually felt like it knew me. Highly recommend to every SSLC student!"</p>
+      <div class="testi-author">
+        <div class="testi-avatar">S</div>
+        <div><div class="testi-name">Sanjana VP</div><div class="testi-loc">Ernakulam</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="section-title">Ready to Find Your Group?</div>
+  <div class="section-sub">Join thousands of Kerala students who found clarity with PathFinder. It's free, takes only 10 minutes, and could shape your entire future.</div>
+  <a href="test.html" class="btn-gold" style="font-size:1.1rem;padding:16px 44px;">🎯 Start Your Free Test</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-logo">🌿 PathFinder Kerala</div>
+  <p>Helping Kerala students find their path since 2024. Not affiliated with DHSE or Kerala Government.</p>
+  <div class="foot-links">
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Use</a>
+    <a href="#">Contact</a>
+    <a href="#">About</a>
+  </div>
+  <p style="font-size:0.75rem;margin-top:4px;">© 2025 PathFinder Kerala. Made with 💚 for Kerala Students.</p>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 100);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
